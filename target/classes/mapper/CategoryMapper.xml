@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace的属性：用于指定当前的映射文件和哪个接口进行映射，需要制定接口的文件路径，需要标注包的完整路径结构-->
+<!--自定义映射规则：resultMap标签来完成映射规则的定义-->
+<mapper namespace="com.cy.store.mapper.CategoryMapper">
+    <resultMap id="CategoriesMap" type="com.cy.store.vo.CategoryVO">
+        <id column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="c_name" jdbcType="VARCHAR" property="cName"/>
+        <result column="c_level" jdbcType="INTEGER" property="cLevel"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="c_icon" jdbcType="VARCHAR" property="cIcon"/>
+        <result column="c_pic" jdbcType="VARCHAR" property="cPic"/>
+    </resultMap>
+
+    <resultMap id="categoryVOMap" type="com.cy.store.vo.CategoryVO">
+        <id column="cid" property="cid" jdbcType="INTEGER"></id>
+        <result column="c_name"  property="cName" jdbcType="VARCHAR"></result>
+        <result column="c_level" property="cLevel" jdbcType="INTEGER"></result>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"></result>
+        <result column="c_pic" property="cPic" jdbcType="VARCHAR"></result>
+        <result column="c_icon" property="cIcon" jdbcType="VARCHAR"></result>
+        <collection property="categories" ofType="com.cy.store.vo.CategoryVO">
+            <id column="cid" property="cid" jdbcType="INTEGER"/>
+            <result column="c_name" property="cName" jdbcType="VARCHAR"/>
+            <result column="c_level" property="cLevel" jdbcType="INTEGER"/>
+            <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+    <select id="selectALLCategories" resultMap="categoryVOMap">
+        select *
+        from category c1
+            inner join category c2
+                    on c2.parent_id=c1.c_level
+        where c1.c_level = 1
+    </select>
+
+    <select id="selectALLCategories2" resultMap="CategoriesMap">
+        select * from category where parent_id=#{parentId}
+    </select>
+
+    <!-- 一级商品分类查询 -->
+    <select id="selectLevel" resultType="com.cy.store.entity.Category">
+        select * from category where c_level=#{cLevel}
+    </select>
+
+    <resultMap id="categoryVO1Map" type="com.cy.store.vo.CategoryVO">
+        <id column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="c_name" jdbcType="VARCHAR" property="cName"/>
+        <result column="c_level" jdbcType="INTEGER" property="cLevel"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="c_icon" jdbcType="VARCHAR" property="cIcon"/>
+        <result column="c_pic" jdbcType="VARCHAR" property="cPic"/>
+        <collection property="products" select="com.cy.store.mapper.ProductMapper.selectTopCategory" column="cid"/>
+    </resultMap>
+    <select id="selectFirstLevelCategories" resultMap="categoryVO1Map">
+        SELECT * FROM category WHERE cid=#{cid}
+    </select>
+
+    <resultMap id="categoryVO2Map" type="com.cy.store.vo.CategoryVO">
+        <id column="cid" jdbcType="INTEGER" property="cid"/>
+        <result column="c_name" jdbcType="VARCHAR" property="cName"/>
+        <result column="c_level" jdbcType="INTEGER" property="cLevel"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="c_icon" jdbcType="VARCHAR" property="cIcon"/>
+        <result column="c_pic" jdbcType="VARCHAR" property="cPic"/>
+        <collection property="products" select="com.cy.store.mapper.ProductMapper.selectTop1Category" column="cid"/>
+    </resultMap>
+    <select id="selectLowPriceCategories" resultMap="categoryVO2Map">
+        select * from category where cid=#{cid}
+    </select>
+</mapper>

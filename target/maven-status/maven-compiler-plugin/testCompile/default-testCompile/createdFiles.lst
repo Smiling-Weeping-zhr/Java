@@ -1,0 +1,8 @@
+com\cy\store\mapper\CartMapperTests.class
+com\cy\store\mapper\CategoryMapperTests.class
+com\cy\store\JWT\JwtTests.class
+com\cy\store\mapper\UserMapperTests.class
+com\cy\store\StoreApplicationTests.class
+com\cy\store\mapper\ProductMapperTests.class
+com\cy\store\service\CartServiceTests.class
+com\cy\store\service\UserServiceTests.class
